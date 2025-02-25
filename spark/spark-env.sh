@@ -1,0 +1,5 @@
+#!/bin/bash
+export SPARK_WORKER_MEMORY=1g
+export SPARK_WORKER_CORES=1
+export SPARK_WORKER_INSTANCES=1
+export SPARK_MASTER_HOST=spark-master
