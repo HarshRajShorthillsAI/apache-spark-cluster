@@ -51,11 +51,12 @@ services:
       - spark-master
     volumes:
       - /home/shtlp_0147/Training/Spark-cluster/spark/app:/app # Mount app Code
+      - /home/shtlp_0147/Training/Spark-cluster/spark/etl:/etl # Mount etl Code
       - /home/shtlp_0147/Training/Spark-cluster/data:/data:ro # Mount data directory
     environment:
       - HOME=/opt/bitnami/spark
       - SPARK_MASTER_URL=spark://spark-master:7077  # Add Master URL
-    working_dir: /app  # Set the working directory inside the container
+    working_dir: /etl  # Set the working directory inside the container
     ports:
       - "8083:8081"  # Spark Web UI
     networks:
