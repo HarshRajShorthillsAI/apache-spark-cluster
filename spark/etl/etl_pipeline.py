@@ -24,3 +24,7 @@ class ETLPipeline:
     def task4(self):
         self.task3()
         self.transform_data.count_impressions_groupby()
+
+    def task5(self):
+        self.task3()
+        self.transform_data.get_product_model_by_evar('117')

@@ -3,7 +3,6 @@ from pyspark.sql.dataframe import DataFrame
 from pyspark.sql.types import StructType, StructField, StringType
 from pyspark.sql.functions import size, split
 import os
-from util import Util
 import inspect
 
 class ReadData:

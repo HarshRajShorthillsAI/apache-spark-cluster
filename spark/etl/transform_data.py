@@ -5,7 +5,7 @@ from pyspark.sql.functions import split, explode
 from pyspark.sql.functions import col
 from pyspark.sql.functions import col, split, expr, when
 from pyspark.sql.functions import sum as spark_sum, col
-from pyspark.sql.functions import col, split, expr, when, array, udf
+from pyspark.sql.functions import col, split, expr, when
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 import os
 
@@ -164,8 +164,21 @@ class TransformData:
         except Exception as e:
             print(e)
 
-    def get_product_model_by_evar(self, evar: int) -> None:
+    def get_product_model_by_evar(self, evar: str) -> None:
         try:
-            pass
+            df = self.readData.resultant_dataframe.select(['rest_post_product_list'])
+            
+            df = df.withColumn('evar_model', split(col('rest_post_product_list')[0], "\\|"))
+            df.drop('rest_post_product_list')
+            df = df.withColumn("evar_entry", explode(col("evar_model")))
+            df.drop('evar_model')
+
+            df = df.withColumn('key', split(col('evar_entry'), '=')[0])
+            df = df.withColumn('value', split(col('evar_entry'), '=')[1])
+
+            self.readData.resultant_dataframe = df.filter(col('key') == evar).select('value')      
+            if self.verbose:
+                self.readData.analyze_dataframe(self.readData.resultant_dataframe)
+            
         except Exception as e:
             print(e)
