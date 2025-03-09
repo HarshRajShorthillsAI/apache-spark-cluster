@@ -1,0 +1,67 @@
+services:
+  spark-master:
+    image: bitnami/spark:latest
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_HOST=spark-master
+    ports:
+      - "8080:8080"  # Spark Web UI
+      - "7077:7077"  # Spark Master Port
+    networks:
+      - spark-network
+    volumes:
+      - /home/shtlp_0147/Training/Spark-cluster/data:/data:ro
+  spark-worker-1:
+    image: bitnami/spark:latest
+    container_name: spark-worker-1
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    ports:
+      - "8081:8081"  # Spark Worker Port
+    depends_on:
+      - spark-master
+    networks:
+      - spark-network
+    volumes:
+      - /home/shtlp_0147/Training/Spark-cluster/data:/data:ro
+
+
+  spark-worker-2:
+    image: bitnami/spark:latest
+    container_name: spark-worker-2
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    ports:
+      - "8082:8081"  # Spark Worker Port
+    depends_on:
+      - spark-master
+    networks:
+      - spark-network
+    volumes:
+      - /home/shtlp_0147/Training/Spark-cluster/data:/data:ro
+
+
+  spark-submit:
+    image: bitnami/spark:latest
+    container_name: spark-submit
+    depends_on:
+      - spark-master
+    volumes:
+      - /home/shtlp_0147/Training/Spark-cluster/spark/app:/app # Mount app Code
+      - /home/shtlp_0147/Training/Spark-cluster/spark/etl:/etl # Mount etl Code
+      - /home/shtlp_0147/Training/Spark-cluster/data:/data:ro # Mount data directory
+    environment:
+      - HOME=/opt/bitnami/spark
+      - SPARK_MASTER_URL=spark://spark-master:7077  # Add Master URL
+    working_dir: /etl  # Set the working directory inside the container
+    ports:
+      - "8083:8081"  # Spark Web UI
+    networks:
+      - spark-network
+
+networks:
+  spark-network:
+    driver: bridge
